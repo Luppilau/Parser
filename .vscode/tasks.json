@@ -1,0 +1,37 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Generate Lexer",
+      "type": "shell",
+      "command": "mono",
+      "args": [
+        "FsLexYacc.10.0.0/build/fslex/net46/fslex.exe",
+        "Parser/src/FM4FUNLexer.fsl",
+        "--unicode"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Generate Parser",
+      "type": "shell",
+      "command": "mono",
+      "args": [
+        "FsLexYacc.10.0.0/build/fsyacc/net46/fsyacc.exe",
+        "Parser/src/FM4FUNParser.fsp",
+        "--module",
+        "FM4FUNParser"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Rebuild",
+      "type": "shell",
+      "command": "mono",
+      "dependsOn": ["Generate Lexer", "Generate Parser"],
+      "problemMatcher": []
+    }
+  ]
+}
