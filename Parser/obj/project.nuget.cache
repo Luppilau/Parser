@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "2cqKzajvGSJnkR45XSIqvZeiRq+ZqoCUbQgkl5YY9VG/52dI4+RatGUsHDMHwS7c/KaZeKPrw9sNNaYMr5/DfQ==",
+  "success": true,
+  "projectFilePath": "/home/luppilau/Desktop/Parser/Parser/Parser.fsproj",
+  "expectedPackageFiles": [
+    "/home/luppilau/.nuget/packages/fsharp.core/6.0.1/fsharp.core.6.0.1.nupkg.sha512",
+    "/home/luppilau/.nuget/packages/fslexyacc/10.0.0/fslexyacc.10.0.0.nupkg.sha512",
+    "/home/luppilau/.nuget/packages/fslexyacc.runtime/10.0.0/fslexyacc.runtime.10.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
