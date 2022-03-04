@@ -14,7 +14,7 @@ module FM4FUNTypesAST
 
 type C =
   | Assignment of ( x * a )
-  | ArrAssignment of ( ArrVal * a )
+  | ArrAssignment of ( A * a * a )
   | Skip
   | Chain of (C * C)
   | If of GC
@@ -27,7 +27,7 @@ type GC =
 type a = 
   | n of int
   | x of x
-  | ArrVal of Arrval
+  | ArrVal of A * a
   | Add of (a * a)
   | Sub of (a * a)
   | Prod of (a * a)
