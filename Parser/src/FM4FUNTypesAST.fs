@@ -2,18 +2,18 @@
 // to store represent arithmetic expressions
 module FM4FUNTypesAST
 
-type expr =
-  | Num of float
-  | TimesExpr of (expr * expr)
-  | DivExpr of (expr * expr)
-  | PlusExpr of (expr * expr)
-  | MinusExpr of (expr * expr)
-  | PowExpr of (expr * expr)
-  | UPlusExpr of (expr)
-  | UMinusExpr of (expr)
+// type expr =
+//   | Num of float
+//   | TimesExpr of (expr * expr)
+//   | DivExpr of (expr * expr)
+//   | PlusExpr of (expr * expr)
+//   | MinusExpr of (expr * expr)
+//   | PowExpr of (expr * expr)
+//   | UPlusExpr of (expr)
+//   | UMinusExpr of (expr)
 
 type C =
-  | Assignment of ( x * C)
+  | Assignment of ( x * a )
   | ArrAssignment of ( ArrVal * a )
   | Skip
   | Chain of (C * C)
