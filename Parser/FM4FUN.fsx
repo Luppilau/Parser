@@ -1,15 +1,15 @@
-// This script implements our interactive calculator
+// This script implements our interactive FM4FUN
 
 // We need to import a couple of modules, including the generated lexer and parser
 #r "FsLexYacc.Runtime.10.0.0/lib/net46/FsLexYacc.Runtime.dll"
 open FSharp.Text.Lexing
 open System
-#load "CalculatorTypesAST.fs"
-open CalculatorTypesAST
-#load "CalculatorParser.fs"
-open CalculatorParser
-#load "CalculatorLexer.fs"
-open CalculatorLexer
+#load "FM4FUNTypesAST.fs"
+open FM4FUNTypesAST
+#load "FM4FUNParser.fs"
+open FM4FUNParser
+#load "FM4FUNLexer.fs"
+open FM4FUNLexer
 
 // We define the evaluation function recursively, by induction on the structure
 // of arithmetic expressions (AST of type expr)
@@ -29,7 +29,7 @@ let parse input =
     // translate string into a buffer of characters
     let lexbuf = LexBuffer<char>.FromString input
     // translate the buffer into a stream of tokens and parse them
-    let res = CalculatorParser.start CalculatorLexer.tokenize lexbuf
+    let res = FM4FUNParser.start FM4FUNLexer.tokenize lexbuf
     // return the result of parsing (i.e. value of type "expr")
     res
 
