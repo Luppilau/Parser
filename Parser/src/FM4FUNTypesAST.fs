@@ -36,9 +36,21 @@ type a =
   | Exp of (a * a)
   | Par of a
 
-
 type b = 
-  | 
+  | true
+  | false
+  | SingleAnd of (b * b)
+  | SingleOr of (b * b)
+  | DoubleAnd of (b * b)
+  | DoubleOr of (b * b)
+  | Neg of b
+  | Eq of (a * a)
+  | Neq of (a * a)
+  | Gt of (a * a)
+  | Geq of (a * a)
+  | Lt of (a * a)
+  | Leq of (a * a)
+  | Par of b
 
 type x = 
   | String
