@@ -11,3 +11,40 @@ type expr =
   | PowExpr of (expr * expr)
   | UPlusExpr of (expr)
   | UMinusExpr of (expr)
+
+type C =
+  | Assignment of ( x * C)
+  | ArrAssignment of ( ArrVal * a )
+  | Skip
+  | Chain of (C * C)
+  | If of GC
+  | Do of GC
+
+type GC = 
+  | Match of (b * C)
+  | Conc of (GC * GC)
+
+type a = 
+  | n of int
+  | x of x
+  | ArrVal of Arrval
+  | Add of (a * a)
+  | Sub of (a * a)
+  | Prod of (a * a)
+  | Div of (a * a)
+  | Neg of a
+  | Exp of (a * a)
+  | Par of a
+
+
+type b = 
+  | 
+
+type x = 
+  | String
+
+type A =
+  | String
+
+type ArrVal =
+  | A * a
