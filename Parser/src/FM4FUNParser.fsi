@@ -27,9 +27,9 @@ type token =
   | POW
   | LPAR
   | RPAR
-  | BOOL of (boolean)
+  | BOOL of (bool)
   | ID of (string)
-  | NUM of (float)
+  | NUM of (int)
 type tokenId = 
     | TOKEN_SKIP
     | TOKEN_IF
@@ -80,4 +80,4 @@ val prodIdxToNonTerminal: int -> nonTerminalId
 
 /// This function gets the name of a token as a string
 val token_to_string: token -> string
-val start : (FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> FSharp.Text.Lexing.LexBuffer<'cty> -> (expr) 
+val start : (FSharp.Text.Lexing.LexBuffer<'cty> -> token) -> FSharp.Text.Lexing.LexBuffer<'cty> -> (C) 

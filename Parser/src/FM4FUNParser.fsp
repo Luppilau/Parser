@@ -4,9 +4,9 @@ open FM4FUNTypesAST
 
 // Tokens
 %start start
-%token <float> NUM
+%token <int> NUM
 %token <string> ID 
-%token <boolean> BOOL
+%token <bool> BOOL
 %token TIMES DIV PLUS MINUS POW LPAR RPAR
 %token TRUE FALSE EQUAL LT GT SCOLON COLON RSQBR LSQBR DASH AND OR EXCL 
 %token SKIP IF FI DO OD EOF
@@ -24,8 +24,8 @@ open FM4FUNTypesAST
 %right LSQBR RSQBR SCOLON
 
 // We specify the return type of each of then non-terminal symbols
-%type <expr> start
-%type <expr> command
+%type <C> start
+%type <C> command
 
 // Grammar productions
 %%
@@ -55,21 +55,21 @@ start: command EOF             { $1 }
 //   | LPAR expression RPAR          { $2 }
 
 command:
-  | ID COLON EQUAL arithmetic                         { Assignment($1, $4) }
-  | ID LSQBR arithmetic RSQBR COLON EQUAL arithmetic  { ArrAssignment($1, $3, $7)}
+  | ID COLON EQUAL arithmetic                         { Assign($1, $4) }
+  | ID LSQBR arithmetic RSQBR COLON EQUAL arithmetic  { ArrAssign($1, $3, $7)}
   | SKIP                                              { Skip }
-  | command SCOLON command                            { Chain($1,$3) }
+  | command SCOLON command                            { Seq($1,$3) }
   | IF guarded FI                                     { If($2) }
   | DO guarded OD                                     { Do($2) }
 
 guarded:
-  | boolean DASH GT command           { Match($1, $4) }      
+  | boolean DASH GT command           { Cond($1, $4) }      
   | guarded LSQBR RSQBR guarded       { Conc($1, $4) }      
 
 arithmetic:
-  | NUM                               { n($1) }
-  | ID                                { x($1) }
-  | ID LSQBR arithmetic RSQBR         { ArrVal($1, $3)}
+  | NUM                               { N($1) }
+  | ID                                { X($1) }
+  | ID LSQBR arithmetic RSQBR         { ArrRead($1, $3)}
   | arithmetic PLUS arithmetic        { Add($1,$3) }
   | arithmetic MINUS arithmetic       { Sub($1,$3) }
   | arithmetic TIMES arithmetic       { Prod($1,$3) }
@@ -85,14 +85,14 @@ boolean:
   | boolean OR boolean                { SingleOr($1, $3) }
   | boolean AND AND  boolean          { DoubleAnd($1, $4) }
   | boolean OR OR boolean             { DoubleOr($1, $4) }
-  | EXCL boolean                      { Neg($2) }
+  | EXCL boolean                      { NegB($2) }
   | arithmetic EQUAL arithmetic       { Eq($1, $3) }
   | arithmetic EXCL EQUAL arithmetic  { Neq($1, $4) }
   | arithmetic GT arithmetic          { Gt($1, $3) }
   | arithmetic GT EQUAL arithmetic    { Geq($1, $4) }
   | arithmetic LT arithmetic          { Lt($1, $3) }
   | arithmetic LT EQUAL arithmetic    { Leq($1, $4) }
-  | LPAR arithmetic RPAR              { $2 }
+  | LPAR boolean RPAR                 { $2 }
 
 
 // Again, the code annotation specifies the result of parsing

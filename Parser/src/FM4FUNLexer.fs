@@ -125,152 +125,152 @@ let rec _fslex_dummy () = _fslex_dummy()
 and tokenize  lexbuf =
   match _fslex_tables.Interpret(0,lexbuf) with
   | 0 -> ( 
-# 23 "Parser/src/FM4FUNLexer.fsl"
+# 24 "Parser/src/FM4FUNLexer.fsl"
                                  tokenize lexbuf 
 # 130 "Parser/src/FM4FUNLexer.fs"
           )
   | 1 -> ( 
-# 24 "Parser/src/FM4FUNLexer.fsl"
+# 25 "Parser/src/FM4FUNLexer.fsl"
                                  lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; 
 # 135 "Parser/src/FM4FUNLexer.fs"
           )
   | 2 -> ( 
-# 25 "Parser/src/FM4FUNLexer.fsl"
-                                 NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf)) 
+# 26 "Parser/src/FM4FUNLexer.fsl"
+                                 NUM(int (LexBuffer<_>.LexemeString lexbuf)) 
 # 140 "Parser/src/FM4FUNLexer.fs"
           )
   | 3 -> ( 
-# 26 "Parser/src/FM4FUNLexer.fsl"
+# 27 "Parser/src/FM4FUNLexer.fsl"
                                  TIMES 
 # 145 "Parser/src/FM4FUNLexer.fs"
           )
   | 4 -> ( 
-# 27 "Parser/src/FM4FUNLexer.fsl"
+# 28 "Parser/src/FM4FUNLexer.fsl"
                                  DIV 
 # 150 "Parser/src/FM4FUNLexer.fs"
           )
   | 5 -> ( 
-# 28 "Parser/src/FM4FUNLexer.fsl"
+# 29 "Parser/src/FM4FUNLexer.fsl"
                                  PLUS 
 # 155 "Parser/src/FM4FUNLexer.fs"
           )
   | 6 -> ( 
-# 29 "Parser/src/FM4FUNLexer.fsl"
+# 30 "Parser/src/FM4FUNLexer.fsl"
                                  MINUS 
 # 160 "Parser/src/FM4FUNLexer.fs"
           )
   | 7 -> ( 
-# 30 "Parser/src/FM4FUNLexer.fsl"
+# 31 "Parser/src/FM4FUNLexer.fsl"
                                  POW 
 # 165 "Parser/src/FM4FUNLexer.fs"
           )
   | 8 -> ( 
-# 31 "Parser/src/FM4FUNLexer.fsl"
+# 32 "Parser/src/FM4FUNLexer.fsl"
                                  LPAR 
 # 170 "Parser/src/FM4FUNLexer.fs"
           )
   | 9 -> ( 
-# 32 "Parser/src/FM4FUNLexer.fsl"
+# 33 "Parser/src/FM4FUNLexer.fsl"
                                  RPAR 
 # 175 "Parser/src/FM4FUNLexer.fs"
           )
   | 10 -> ( 
-# 33 "Parser/src/FM4FUNLexer.fsl"
+# 34 "Parser/src/FM4FUNLexer.fsl"
                                  EQUAL 
 # 180 "Parser/src/FM4FUNLexer.fs"
           )
   | 11 -> ( 
-# 34 "Parser/src/FM4FUNLexer.fsl"
+# 35 "Parser/src/FM4FUNLexer.fsl"
                                  LT 
 # 185 "Parser/src/FM4FUNLexer.fs"
           )
   | 12 -> ( 
-# 35 "Parser/src/FM4FUNLexer.fsl"
+# 36 "Parser/src/FM4FUNLexer.fsl"
                                  GT 
 # 190 "Parser/src/FM4FUNLexer.fs"
           )
   | 13 -> ( 
-# 36 "Parser/src/FM4FUNLexer.fsl"
+# 37 "Parser/src/FM4FUNLexer.fsl"
                                  SCOLON 
 # 195 "Parser/src/FM4FUNLexer.fs"
           )
   | 14 -> ( 
-# 37 "Parser/src/FM4FUNLexer.fsl"
+# 38 "Parser/src/FM4FUNLexer.fsl"
                                  COLON 
 # 200 "Parser/src/FM4FUNLexer.fs"
           )
   | 15 -> ( 
-# 38 "Parser/src/FM4FUNLexer.fsl"
+# 39 "Parser/src/FM4FUNLexer.fsl"
                                  LSQBR 
 # 205 "Parser/src/FM4FUNLexer.fs"
           )
   | 16 -> ( 
-# 39 "Parser/src/FM4FUNLexer.fsl"
+# 40 "Parser/src/FM4FUNLexer.fsl"
                                  RSQBR 
 # 210 "Parser/src/FM4FUNLexer.fs"
           )
   | 17 -> ( 
-# 40 "Parser/src/FM4FUNLexer.fsl"
+# 41 "Parser/src/FM4FUNLexer.fsl"
                                  DASH 
 # 215 "Parser/src/FM4FUNLexer.fs"
           )
   | 18 -> ( 
-# 41 "Parser/src/FM4FUNLexer.fsl"
+# 42 "Parser/src/FM4FUNLexer.fsl"
                                  AND 
 # 220 "Parser/src/FM4FUNLexer.fs"
           )
   | 19 -> ( 
-# 42 "Parser/src/FM4FUNLexer.fsl"
+# 43 "Parser/src/FM4FUNLexer.fsl"
                                  OR 
 # 225 "Parser/src/FM4FUNLexer.fs"
           )
   | 20 -> ( 
-# 43 "Parser/src/FM4FUNLexer.fsl"
+# 44 "Parser/src/FM4FUNLexer.fsl"
                                  EXCL 
 # 230 "Parser/src/FM4FUNLexer.fs"
           )
   | 21 -> ( 
-# 44 "Parser/src/FM4FUNLexer.fsl"
+# 45 "Parser/src/FM4FUNLexer.fsl"
                                  SKIP 
 # 235 "Parser/src/FM4FUNLexer.fs"
           )
   | 22 -> ( 
-# 45 "Parser/src/FM4FUNLexer.fsl"
+# 46 "Parser/src/FM4FUNLexer.fsl"
                                  IF 
 # 240 "Parser/src/FM4FUNLexer.fs"
           )
   | 23 -> ( 
-# 46 "Parser/src/FM4FUNLexer.fsl"
+# 47 "Parser/src/FM4FUNLexer.fsl"
                                  FI 
 # 245 "Parser/src/FM4FUNLexer.fs"
           )
   | 24 -> ( 
-# 47 "Parser/src/FM4FUNLexer.fsl"
+# 48 "Parser/src/FM4FUNLexer.fsl"
                                  DO 
 # 250 "Parser/src/FM4FUNLexer.fs"
           )
   | 25 -> ( 
-# 48 "Parser/src/FM4FUNLexer.fsl"
+# 49 "Parser/src/FM4FUNLexer.fsl"
                                  OD 
 # 255 "Parser/src/FM4FUNLexer.fs"
           )
   | 26 -> ( 
-# 49 "Parser/src/FM4FUNLexer.fsl"
+# 50 "Parser/src/FM4FUNLexer.fsl"
                                  ID(LexBuffer<_>.LexemeString lexbuf)
 # 260 "Parser/src/FM4FUNLexer.fs"
           )
   | 27 -> ( 
-# 50 "Parser/src/FM4FUNLexer.fsl"
+# 51 "Parser/src/FM4FUNLexer.fsl"
                                  TRUE 
 # 265 "Parser/src/FM4FUNLexer.fs"
           )
   | 28 -> ( 
-# 51 "Parser/src/FM4FUNLexer.fsl"
+# 52 "Parser/src/FM4FUNLexer.fsl"
                                  FALSE 
 # 270 "Parser/src/FM4FUNLexer.fs"
           )
   | 29 -> ( 
-# 52 "Parser/src/FM4FUNLexer.fsl"
+# 53 "Parser/src/FM4FUNLexer.fsl"
                                  EOF 
 # 275 "Parser/src/FM4FUNLexer.fs"
           )
