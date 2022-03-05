@@ -34,11 +34,9 @@ type a =
   | Div of (a * a)
   | Neg of a
   | Exp of (a * a)
-  | Par of a
 
 type b = 
-  | true
-  | false
+  | Bool of bool
   | SingleAnd of (b * b)
   | SingleOr of (b * b)
   | DoubleAnd of (b * b)
@@ -50,7 +48,6 @@ type b =
   | Geq of (a * a)
   | Lt of (a * a)
   | Leq of (a * a)
-  | Par of b
 
 type x = 
   | String

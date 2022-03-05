@@ -20,10 +20,8 @@ let newline     = "\n\r" | '\n' | '\r'
 // NOTE: rules are applied in order top-down.
 //       This is important when tokens overlap (not in this example)
 rule tokenize = parse
-// deal with tokens that need to be ignored (skip them)
 | whitespace    { tokenize lexbuf }
 | newline       { lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; }
-// deal with tokens that need to be built
 | num           { NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf)) }
 | '*'           { TIMES }
 | '/'           { DIV }
@@ -32,4 +30,28 @@ rule tokenize = parse
 | '^'           { POW }
 | '('           { LPAR }
 | ')'           { RPAR }
+| '='           { EQUAL }
+| '<'           { LT }
+| '>'           { GT }
+| ';'           { SCOLON }
+| ':'           { COLON }
+| '['           { LSQBR }
+| ']'           { RSQBR }
+| '-'           { DASH }
+| '&'           { AND }
+| '|'           { OR }
+| '!'           { EXCL }
+| "skip"        { SKIP }
+| "if"          { IF }
+| "fi"          { FI }
+| "do"          { DO }
+| "od"          { OD }
+| ['a'-'z']+    { ID(LexBuffer<_>.LexemeString lexbuf)}
+| "true"        { TRUE }
+| "false"       { FALSE }
 | eof           { EOF }
+
+
+ 
+BOOL
+ 
