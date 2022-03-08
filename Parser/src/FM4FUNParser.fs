@@ -388,7 +388,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 67 "Parser/src/FM4FUNParser.fsp"
-                                                                           Conc(_1, _3) 
+                                                                             Conc(_1, _3) 
                    )
 # 67 "Parser/src/FM4FUNParser.fsp"
                  : 'guarded));

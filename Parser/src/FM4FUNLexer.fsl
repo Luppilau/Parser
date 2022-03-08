@@ -23,37 +23,38 @@ let boolean     = "true" | "false"
 // NOTE: rules are applied in order top-down.
 //       This is important when tokens overlap (not in this example)
 rule tokenize = parse
-| whitespace    { tokenize lexbuf }
-| newline       { lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; }
-| num           { NUM(int (LexBuffer<_>.LexemeString lexbuf)) }
-| '*'           { TIMES }
-| '/'           { DIV }
-| '+'           { PLUS }
-| '-'           { MINUS }
-| '^'           { POW }
-| '('           { LPAR }
-| ')'           { RPAR }
-| '='           { EQUAL }
-| '<'           { LT }
-| '>'           { GT }
-| ';'           { SCOLON }
-| ':'           { COLON }
-| '['           { LSQBR }
-| ']'           { RSQBR }
-| '-'           { DASH }
-| '&'           { AND }
-| '|'           { OR }
-| '!'           { EXCL }
-| "[]"          { BOX }
-| "->"          { ARROW }
-| "skip"        { SKIP }
-| "if"          { IF }
-| "fi"          { FI }
-| "do"          { DO }
-| "od"          { OD }
-| ['a'-'z']+    { ID(LexBuffer<_>.LexemeString lexbuf)}
-| boolean       { BOOL(Boolean.Parse(LexBuffer<_>.LexemeString lexbuf))}
-| eof           { EOF }
+
+| whitespace            { tokenize lexbuf }
+| newline               { lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf; }
+| num                   { NUM(int (LexBuffer<_>.LexemeString lexbuf)) }
+| boolean               { BOOL(Boolean.Parse(LexBuffer<_>.LexemeString lexbuf))}
+| '*'                   { TIMES }
+| '/'                   { DIV }
+| '+'                   { PLUS }
+| '-'                   { MINUS }
+| '^'                   { POW }
+| '('                   { LPAR }
+| ')'                   { RPAR }
+| '='                   { EQUAL }
+| '<'                   { LT }
+| '>'                   { GT }
+| '['                   { LSQBR }
+| ']'                   { RSQBR }
+| ';'                   { SCOLON }
+| ':'                   { COLON }
+| '-'                   { DASH }
+| '&'                   { AND }
+| '|'                   { OR }
+| '!'                   { EXCL }
+| "[]"                  { BOX }
+| "->"                  { ARROW }
+| "skip"                { SKIP }
+| "if"                  { IF }
+| "fi"                  { FI }
+| "do"                  { DO }
+| "od"                  { OD }
+| ['a'-'z''A'-'Z']+     { ID(LexBuffer<_>.LexemeString lexbuf)}
+| eof                   { EOF }
 
 
  

@@ -15,32 +15,32 @@ open FM4FUNLexer
 
 let rec eval_C e =
     match e with
-    | Assign (x, y) -> $"Assign({x},{eval_a y})"
-    | ArrAssign (x, y, z) -> $"ArrAssign({x},{eval_a y},{eval_a z})"
-    | Seq (x, y) -> $"Seq({eval_C x},{eval_C y})"
-    | If (x) -> $"If({eval_GC x})"
-    | Do (x) -> $"Do({eval_GC x})"
-    | Skip -> "Skip()"
+    | Assign (x, y) -> $"Assign({x},{eval_a y})" //
+    | ArrAssign (x, y, z) -> $"ArrAssign({x},{eval_a y},{eval_a z})" //
+    | Seq (x, y) -> $"Seq({eval_C x},{eval_C y})" //
+    | If (x) -> $"If({eval_GC x})" //
+    | Do (x) -> $"Do({eval_GC x})" //
+    | Skip -> "Skip()" //
 
 and eval_GC e =
     match e with
-    | Cond (x, y) -> $"Cond({eval_b x},{eval_C y})"
-    | Conc (x, y) -> $"Conc({eval_GC x},{eval_GC y})"
+    | Cond (x, y) -> $"Cond({eval_b x},{eval_C y})" //
+    | Conc (x, y) -> $"Conc({eval_GC x},{eval_GC y})" // kun med BOX
 
 and eval_b e =
     match e with
     | Bool (x) -> $"Bool({x})"
-    | SingleAnd (x, y) -> $"SingleAnd({eval_b x},{eval_b y})"
-    | SingleOr (x, y) -> $"SingleOr({eval_b x},{eval_b y})"
-    | DoubleAnd (x, y) -> $"DoubleAnd({eval_b x},{eval_b y})"
-    | DoubleOr (x, y) -> $"DoubleOr({eval_b x},{eval_b y})"
-    | NegB x -> $"NegB({eval_b x})"
-    | Eq (x, y) -> $"Eq({eval_a x},{eval_a y})"
-    | Neq (x, y) -> $"Neq({eval_a x},{eval_a y})"
-    | Gt (x, y) -> $"Gt({eval_a x},{eval_a y})"
-    | Geq (x, y) -> $"Geq({eval_a x},{eval_a y})"
-    | Lt (x, y) -> $"Lt({eval_a x},{eval_a y})"
-    | Leq (x, y) -> $"Leq({eval_a x},{eval_a y})"
+    | SingleAnd (x, y) -> $"SingleAnd({eval_b x},{eval_b y})" //
+    | SingleOr (x, y) -> $"SingleOr({eval_b x},{eval_b y})" //
+    | DoubleAnd (x, y) -> $"DoubleAnd({eval_b x},{eval_b y})" //
+    | DoubleOr (x, y) -> $"DoubleOr({eval_b x},{eval_b y})" //
+    | NegB x -> $"NegB({eval_b x})" //
+    | Eq (x, y) -> $"Eq({eval_a x},{eval_a y})" //
+    | Neq (x, y) -> $"Neq({eval_a x},{eval_a y})" //
+    | Gt (x, y) -> $"Gt({eval_a x},{eval_a y})" //
+    | Geq (x, y) -> $"Geq({eval_a x},{eval_a y})" //
+    | Lt (x, y) -> $"Lt({eval_a x},{eval_a y})" //
+    | Leq (x, y) -> $"Leq({eval_a x},{eval_a y})" //
 
 and eval_a e =
     match e with
@@ -52,7 +52,7 @@ and eval_a e =
     | Prod (x, y) -> $"Prod({eval_a x},{eval_a y})"
     | Div (x, y) -> $"Div({eval_a x},{eval_a y})"
     | Neg (x) -> $"Neg({eval_a x})"
-    | Exp (x, y) -> $"Assign({eval_a x},{eval_a y})"
+    | Exp (x, y) -> $"Exp({eval_a x},{eval_a y})"
 
 // We
 let parse input =
@@ -61,8 +61,33 @@ let parse input =
     // translate the buffer into a stream of tokens and parse them
     let res = FM4FUNParser.start FM4FUNLexer.tokenize lexbuf
     // return the result of parsing (i.e. value of type "expr")
-    printfn "Result success"
     res
+
+let tokenPrinter input =
+    let lexbuf = LexBuffer<char>.FromString input
+
+    let allTokens =
+        Seq.initInfinite (fun _ -> FM4FUNLexer.tokenize lexbuf)
+        |> Seq.takeWhile ((<>) token.EOF)
+
+    let rec allTokens e =
+        match e with
+        | token.EOF -> []
+        | t -> t :: allTokens (FM4FUNLexer.tokenize lexbuf)
+
+    let x = allTokens (FM4FUNLexer.tokenize lexbuf)
+
+    let printList list =
+        let rec helper index list =
+            match list with
+            | [] -> ()
+            | head :: tail ->
+                printfn "%d: %A" index head
+                helper (index + 1) tail
+
+        helper 1 list
+
+    printList x
 
 // We implement here the function that interacts with the user
 let rec compute =
@@ -70,13 +95,16 @@ let rec compute =
     let fullPath = System.IO.Path.Combine(inputPath.FullName, "src/input.txt")
     let input = System.IO.File.ReadAllText fullPath
 
-    printfn "%s\n" input
+    // tokenPrinter input
+    printfn "Input:\n\n%s\n" input
+
+    printfn "--------------"
 
     try
         let e = parse input
-        printfn $"{eval_C e}"
+        printfn $"Result:\n\n{eval_C e}\n"
     with
-    | _ -> printfn "invalid input \n"
+    | _ -> printfn "Result:\n\nInvalid input \n"
 
 
 compute
