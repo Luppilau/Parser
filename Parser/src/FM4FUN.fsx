@@ -95,16 +95,12 @@ let rec compute =
     let fullPath = System.IO.Path.Combine(inputPath.FullName, "src/input.txt")
     let input = System.IO.File.ReadAllText fullPath
 
-    // tokenPrinter input
-    printfn "Input:\n\n%s\n" input
-
-    printfn "--------------"
-
     try
         let e = parse input
-        printfn $"Result:\n\n{eval_C e}\n"
+        printfn "Result: Valid GCL program"
+        printfn $"Print:\n\n{eval_C e}\n"
     with
-    | _ -> printfn "Result:\n\nInvalid input \n"
+    | _ -> printfn "Result: Invalid GCL program \n"
 
 
 compute
