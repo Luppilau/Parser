@@ -20,6 +20,8 @@ type token =
   | AND
   | OR
   | EXCL
+  | ARROW
+  | BOX
   | TIMES
   | DIV
   | PLUS
@@ -50,6 +52,8 @@ type tokenId =
     | TOKEN_AND
     | TOKEN_OR
     | TOKEN_EXCL
+    | TOKEN_ARROW
+    | TOKEN_BOX
     | TOKEN_TIMES
     | TOKEN_DIV
     | TOKEN_PLUS

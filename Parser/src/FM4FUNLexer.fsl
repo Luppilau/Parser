@@ -15,6 +15,8 @@ let int         = ['0'-'9']+
 let num         = digit+ ( '.' digit+)?  ('E' ('+'|'-')? digit+ )?
 let whitespace  = [' ' '\t']
 let newline     = "\n\r" | '\n' | '\r'
+let boolean     = "true" | "false"
+
 
 // We define now the rules for recognising and building tokens
 // for each of the tokens of our language we need a rule
@@ -42,14 +44,15 @@ rule tokenize = parse
 | '&'           { AND }
 | '|'           { OR }
 | '!'           { EXCL }
+| "[]"          { BOX }
+| "->"          { ARROW }
 | "skip"        { SKIP }
 | "if"          { IF }
 | "fi"          { FI }
 | "do"          { DO }
 | "od"          { OD }
 | ['a'-'z']+    { ID(LexBuffer<_>.LexemeString lexbuf)}
-| "true"        { TRUE }
-| "false"       { FALSE }
+| boolean       { BOOL(Boolean.Parse(LexBuffer<_>.LexemeString lexbuf))}
 | eof           { EOF }
 
 
