@@ -13,46 +13,14 @@ open FM4FUNParser
 #load "FM4FUNLexer.fs"
 open FM4FUNLexer
 
-let rec eval_C e =
-    match e with
-    | Assign (x, y) -> $"Assign({x},{eval_a y})" //
-    | ArrAssign (x, y, z) -> $"ArrAssign({x},{eval_a y},{eval_a z})" //
-    | Seq (x, y) -> $"Seq({eval_C x},{eval_C y})" //
-    | If (x) -> $"If({eval_GC x})" //
-    | Do (x) -> $"Do({eval_GC x})" //
-    | Skip -> "Skip()" //
-
-and eval_GC e =
-    match e with
-    | Cond (x, y) -> $"Cond({eval_b x},{eval_C y})" //
-    | Conc (x, y) -> $"Conc({eval_GC x},{eval_GC y})" // kun med BOX
-
-and eval_b e =
-    match e with
-    | Bool (x) -> $"Bool({x})"
-    | SingleAnd (x, y) -> $"SingleAnd({eval_b x},{eval_b y})" //
-    | SingleOr (x, y) -> $"SingleOr({eval_b x},{eval_b y})" //
-    | DoubleAnd (x, y) -> $"DoubleAnd({eval_b x},{eval_b y})" //
-    | DoubleOr (x, y) -> $"DoubleOr({eval_b x},{eval_b y})" //
-    | NegB x -> $"NegB({eval_b x})" //
-    | Eq (x, y) -> $"Eq({eval_a x},{eval_a y})" //
-    | Neq (x, y) -> $"Neq({eval_a x},{eval_a y})" //
-    | Gt (x, y) -> $"Gt({eval_a x},{eval_a y})" //
-    | Geq (x, y) -> $"Geq({eval_a x},{eval_a y})" //
-    | Lt (x, y) -> $"Lt({eval_a x},{eval_a y})" //
-    | Leq (x, y) -> $"Leq({eval_a x},{eval_a y})" //
-
-and eval_a e =
-    match e with
-    | N (x) -> $"N({x})"
-    | X (x) -> $"X({x})"
-    | ArrRead (x, y) -> $"ArrRead({x},{eval_a y})"
-    | Add (x, y) -> $"Add({eval_a x},{eval_a y})"
-    | Sub (x, y) -> $"Sub({eval_a x},{eval_a y})"
-    | Prod (x, y) -> $"Prod({eval_a x},{eval_a y})"
-    | Div (x, y) -> $"Div({eval_a x},{eval_a y})"
-    | Neg (x) -> $"Neg({eval_a x})"
-    | Exp (x, y) -> $"Exp({eval_a x},{eval_a y})"
+#load "SyntaxTree.fsx"
+open SyntaxTree
+#load "PrettyPrint.fsx"
+open PrettyPrint
+#load "TokenPrint.fsx"
+open TokenPrint
+#load "ProgramGrapher.fsx"
+open ProgramGrapher
 
 // We
 let parse input =
@@ -63,31 +31,6 @@ let parse input =
     // return the result of parsing (i.e. value of type "expr")
     res
 
-let tokenPrinter input =
-    let lexbuf = LexBuffer<char>.FromString input
-
-    let allTokens =
-        Seq.initInfinite (fun _ -> FM4FUNLexer.tokenize lexbuf)
-        |> Seq.takeWhile ((<>) token.EOF)
-
-    let rec allTokens e =
-        match e with
-        | token.EOF -> []
-        | t -> t :: allTokens (FM4FUNLexer.tokenize lexbuf)
-
-    let x = allTokens (FM4FUNLexer.tokenize lexbuf)
-
-    let printList list =
-        let rec helper index list =
-            match list with
-            | [] -> ()
-            | head :: tail ->
-                printfn "%d: %A" index head
-                helper (index + 1) tail
-
-        helper 1 list
-
-    printList x
 
 // We implement here the function that interacts with the user
 let rec compute =
@@ -95,10 +38,15 @@ let rec compute =
     let fullPath = System.IO.Path.Combine(inputPath.FullName, "src/input.txt")
     let input = System.IO.File.ReadAllText fullPath
 
+    // token_print input
+    let x = parse input
+    let y = ast x
+    let z = create_program_graph y
+
     try
         let e = parse input
         printfn "Result: Valid GCL program"
-        printfn $"Print:\n\n{eval_C e}\n"
+        printfn $"Print:\n\n{pretty_print e}\n"
     with
     | _ -> printfn "Result: Invalid GCL program \n"
 
