@@ -1,6 +1,5 @@
 module SyntaxTree
 
-#load "FM4FUNTypesAST.fs"
 open FM4FUNTypesAST
 
 let rec ast e =

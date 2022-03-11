@@ -13,13 +13,13 @@ open FM4FUNParser
 #load "FM4FUNLexer.fs"
 open FM4FUNLexer
 
-#load "SyntaxTree.fsx"
+#load "SyntaxTree.fs"
 open SyntaxTree
-#load "PrettyPrint.fsx"
+#load "PrettyPrint.fs"
 open PrettyPrint
 #load "TokenPrint.fsx"
 open TokenPrint
-#load "ProgramGrapher.fsx"
+#load "ProgramGrapher.fs"
 open ProgramGrapher
 
 // We
@@ -39,16 +39,20 @@ let rec compute =
     let input = System.IO.File.ReadAllText fullPath
 
     // token_print input
-    let x = parse input
-    let y = ast x
-    let z = create_program_graph y
+
 
     try
         let e = parse input
+        let y = ast e
+        let z = create_program_graph y
+        printfn $"{z}"
+        printfn $"{get_graphviz_link z}"
+        // printfn $"Print:\n\n{pretty_print e}\n"
         printfn "Result: Valid GCL program"
-        printfn $"Print:\n\n{pretty_print e}\n"
     with
     | _ -> printfn "Result: Invalid GCL program \n"
+
+
 
 
 compute

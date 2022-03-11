@@ -1,6 +1,5 @@
 module PrettyPrint
 
-#load "FM4FUNTypesAST.fs"
 open FM4FUNTypesAST
 
 let rec pretty_print e =
