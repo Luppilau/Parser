@@ -24,22 +24,40 @@ open ProgramGrapher
 
 
 
-let node n = $"q{n} -> q{n + 1}"
+type Node =
+    | Start
+    | Intermediate of int
+    | End
 
-let rec get_C e n =
+type Edge = Node * Node * string
+
+let rec get_C e acc (n_s: Node) (n_e: Node) =
     match e with
-    | Assign (x, y) -> $"{node n} [label=\"{x}:={get_a y}\"]"
-    | ArrAssign (x, y, z) -> $"{node n} [label=\"{x}[{get_a y}]:={get_a z}\"]"
-    | Seq (x, y) -> $"{get_C x n}\n{get_C y (n + 1)}"
-    // | If (x) -> If(eval_GC x)
-    // | Do (x) -> Do(eval_GC x)
-    // | Skip -> Skip
-    | _ -> ""
+    | Assign (x, y) -> [ Edge(n_s, n_e, $"{x}:={get_a y}") ]
+    | ArrAssign (x, y, z) -> [ Edge(n_s, n_e, $"{x}[{get_a y}]:={get_a z}") ]
+    | Seq (x, y) ->
+        (get_C x (acc + 1) n_s (Intermediate(acc)))
+        @ (get_C y (acc + 1) (Intermediate(acc)) n_e)
+    | If (x) -> get_GC x acc n_s n_e
+    | Do (x) ->
+        Edge(n_s, n_e, $"!{get_b (get_do_b x)}")
+        :: get_GC x acc n_s n_s
+    //  | Skip -> Skip
+    | _ -> [ Edge(n_s, n_e, "_") ]
 
-// and eval_GC e =
-//     match e with
-//     | Cond (x, y) -> Cond(eval_b x, ast y)
-//     | Conc (x, y) -> Conc(eval_GC x, eval_GC y)
+and get_do_b x =
+    match x with
+    | Cond (x, _) -> x
+    | Conc (x, y) -> DoubleAnd(get_do_b x, get_do_b y)
+
+and get_GC e acc n_s n_e =
+    match e with
+    | Cond (x, y) ->
+        [ Edge(n_s, Intermediate(acc), $"{get_b x}") ]
+        @ get_C y (acc + 1) (Intermediate(acc)) n_e
+    | Conc (x, y) ->
+        (get_GC x acc n_s n_e)
+        @ (get_GC y (acc + 1) n_s n_e)
 
 and get_b e =
     match e with
@@ -68,7 +86,32 @@ and get_a e =
     | Neg (x) -> $"-{get_a x}"
     | Exp (x, y) -> $"{get_a x}^{get_a y}"
 
-let create_program_graph ast = get_C ast 0
+let create_program_graph ast = get_C ast 1 Start End
+
+
+let get_graphviz_link program_graph =
+
+    let rec format program_graph n =
+        match program_graph with
+        | x :: tail -> convert x n + format tail (n + 1)
+        | _ -> ""
+
+    and convert edge n =
+        match edge with
+        | (n_1, n_2, expr) -> $"q{get_node_id n_1 n} -> q{get_node_id n_2 (n + 1)} [label=\"{expr}\"] \n"
+
+    and get_node_id node n =
+        match node with
+        | Start -> "s"
+        | Intermediate (n) -> string (n)
+        | End -> "e"
+
+    let base_url = "https://dreampuf.github.io/GraphvizOnline/#digraph%20G"
+
+    let result = $"{base_url}%%7B%%0A{format program_graph 0}%%0A%%7D"
+    let final = result.Replace("\n", "%0A")
+
+    $"\n{final}\n"
 
 // -------------------------------------------------------------------------------- //
 
@@ -92,11 +135,11 @@ let rec compute =
 
     try
         let e = parse input
+        printfn $"Print:\n\n{pretty_print e}\n"
         let y = ast e
         let z = create_program_graph y
         printfn $"{z}"
         printfn $"{get_graphviz_link z}"
-        // printfn $"Print:\n\n{pretty_print e}\n"
         printfn "Result: Valid GCL program"
     with
     | _ -> printfn "Result: Invalid GCL program \n"
