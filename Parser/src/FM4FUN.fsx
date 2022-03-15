@@ -22,23 +22,15 @@ open TokenPrint
 #load "ProgramGrapher.fs"
 open ProgramGrapher
 
-// We
-let parse input =
-    // translate string into a buffer of characters
-    let lexbuf = LexBuffer<char>.FromString input
-    // translate the buffer into a stream of tokens and parse them
-    let res = FM4FUNParser.start FM4FUNLexer.tokenize lexbuf
-    // return the result of parsing (i.e. value of type "expr")
-    res
 
 
 let node n = $"q{n} -> q{n + 1}"
 
-let rec traverse e n =
+let rec get_C e n =
     match e with
     | Assign (x, y) -> $"{node n} [label=\"{x}:={get_a y}\"]"
     | ArrAssign (x, y, z) -> $"{node n} [label=\"{x}[{get_a y}]:={get_a z}\"]"
-    | Seq (x, y) -> $"{traverse x n}\n{traverse y (n + 1)}"
+    | Seq (x, y) -> $"{get_C x n}\n{get_C y (n + 1)}"
     // | If (x) -> If(eval_GC x)
     // | Do (x) -> Do(eval_GC x)
     // | Skip -> Skip
@@ -76,7 +68,18 @@ and get_a e =
     | Neg (x) -> $"-{get_a x}"
     | Exp (x, y) -> $"{get_a x}^{get_a y}"
 
-let create_program_graph ast = traverse ast 0
+let create_program_graph ast = get_C ast 0
+
+// -------------------------------------------------------------------------------- //
+
+// We
+let parse input =
+    // translate string into a buffer of characters
+    let lexbuf = LexBuffer<char>.FromString input
+    // translate the buffer into a stream of tokens and parse them
+    let res = FM4FUNParser.start FM4FUNLexer.tokenize lexbuf
+    // return the result of parsing (i.e. value of type "expr")
+    res
 
 
 // We implement here the function that interacts with the user
@@ -86,7 +89,6 @@ let rec compute =
     let input = System.IO.File.ReadAllText fullPath
 
     // token_print input
-
 
     try
         let e = parse input

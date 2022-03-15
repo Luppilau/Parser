@@ -19,3 +19,4 @@ bin
 .fake
 
 .ionide
+.ionide/*
