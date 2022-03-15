@@ -33,31 +33,37 @@ type Edge = Node * Node * string
 
 let rec get_C e acc (n_s: Node) (n_e: Node) =
     match e with
-    | Assign (x, y) -> [ Edge(n_s, n_e, $"{x}:={get_a y}") ]
-    | ArrAssign (x, y, z) -> [ Edge(n_s, n_e, $"{x}[{get_a y}]:={get_a z}") ]
+    | Assign (x, y) -> ([ Edge(n_s, n_e, $"{x}:={get_a y}") ], acc + 1)
+    | ArrAssign (x, y, z) -> ([ Edge(n_s, n_e, $"{x}[{get_a y}]:={get_a z}") ], acc + 1)
     | Seq (x, y) ->
-        (get_C x (acc + 1) n_s (Intermediate(acc)))
-        @ (get_C y (acc + 1) (Intermediate(acc)) n_e)
+        let (arr, ac) = (get_C x acc n_s (Intermediate(acc)))
+        let (arr2, ac2) = get_C y ac (Intermediate(acc)) n_e
+        ((arr @ arr2), ac2 + 1)
     | If (x) -> get_GC x acc n_s n_e
     | Do (x) ->
-        Edge(n_s, n_e, $"!{get_b (get_do_b x)}")
-        :: get_GC x acc n_s n_s
+        ((Edge(n_s, n_e, $"!{get_b (get_do_b x)}")
+          :: fst (get_GC x (acc) n_s n_s)),
+         acc)
     //  | Skip -> Skip
-    | _ -> [ Edge(n_s, n_e, "_") ]
+    | _ -> ([ Edge(n_s, n_e, "_") ], acc)
 
 and get_do_b x =
     match x with
     | Cond (x, _) -> x
-    | Conc (x, y) -> DoubleAnd(get_do_b x, get_do_b y)
+    | Conc (x, y) -> SingleAnd(get_do_b x, get_do_b y)
 
 and get_GC e acc n_s n_e =
     match e with
     | Cond (x, y) ->
-        [ Edge(n_s, Intermediate(acc), $"{get_b x}") ]
-        @ get_C y (acc + 1) (Intermediate(acc)) n_e
+        let (arr, ac) = get_C y (acc + 1) (Intermediate(acc)) n_e
+        ((Edge(n_s, Intermediate(acc), $"{get_b x}") :: arr), ac)
+
     | Conc (x, y) ->
-        (get_GC x acc n_s n_e)
-        @ (get_GC y (acc + 1) n_s n_e)
+        let (arr, ac) = (get_GC x acc n_s n_e)
+        printfn $"{ac}"
+        let (arr2, ac2) = (get_GC y ac n_s n_e)
+        printfn $"{ac2}"
+        ((arr @ arr2), ac2)
 
 and get_b e =
     match e with
@@ -86,7 +92,7 @@ and get_a e =
     | Neg (x) -> $"-{get_a x}"
     | Exp (x, y) -> $"{get_a x}^{get_a y}"
 
-let create_program_graph ast = get_C ast 1 Start End
+let create_program_graph ast = fst (get_C ast 1 Start End)
 
 
 let get_graphviz_link program_graph =
