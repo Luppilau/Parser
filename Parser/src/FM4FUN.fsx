@@ -26,26 +26,39 @@ open ProgramGrapher
 
 type Node =
     | Start
-    | Intermediate of int
+    | Step of int
     | End
 
 type Edge = Node * Node * string
 
+// e:       ast
+// acc:     id of last node
+// n_s:     startnode
+// n_e:     endnode
+
+let get_id =
+    function
+    | Start -> 0
+    | Step (n) -> n
+    | End -> 2147483647
+
 let rec get_C e acc (n_s: Node) (n_e: Node) =
+    printfn $"{acc} {e}"
+
     match e with
-    | Assign (x, y) -> ([ Edge(n_s, n_e, $"{x}:={get_a y}") ], acc + 1)
-    | ArrAssign (x, y, z) -> ([ Edge(n_s, n_e, $"{x}[{get_a y}]:={get_a z}") ], acc + 1)
+    | Assign (x, y) -> [ Edge(n_s, n_e, $"{x}:={get_a y}") ]
+    | ArrAssign (x, y, z) -> [ Edge(n_s, n_e, $"{x}[{get_a y}]:={get_a z}") ]
     | Seq (x, y) ->
-        let (arr, ac) = (get_C x acc n_s (Intermediate(acc)))
-        let (arr2, ac2) = get_C y ac (Intermediate(acc)) n_e
-        ((arr @ arr2), ac2 + 1)
+        let arr = get_C x acc n_s (Step(acc))
+        let (_, last, _) = List.last arr
+        let id = 1 + get_id last
+        let arr2 = get_C y id last n_e
+        arr @ arr2
     | If (x) -> get_GC x acc n_s n_e
     | Do (x) ->
-        ((Edge(n_s, n_e, $"!{get_b (get_do_b x)}")
-          :: fst (get_GC x (acc) n_s n_s)),
-         acc)
-    //  | Skip -> Skip
-    | _ -> ([ Edge(n_s, n_e, "_") ], acc)
+        get_GC x acc n_s n_s
+        @ [ Edge(n_s, n_e, $"!{get_b (get_do_b x)}") ]
+    | Skip -> [ Edge(n_s, n_e, "skip") ]
 
 and get_do_b x =
     match x with
@@ -53,15 +66,19 @@ and get_do_b x =
     | Conc (x, y) -> SingleAnd(get_do_b x, get_do_b y)
 
 and get_GC e acc n_s n_e =
+    printfn $"{acc} {e}"
+
     match e with
     | Cond (x, y) ->
-        let (arr, ac) = get_C y (acc + 1) (Intermediate(acc)) n_e
-        ((Edge(n_s, Intermediate(acc), $"{get_b x}") :: arr), ac)
+        (get_C y (acc + 1) (Step(acc)) n_e)
+        @ [ Edge(n_s, Step(acc), $"{get_b x}") ]
 
     | Conc (x, y) ->
-        let (arr, ac) = (get_GC x acc n_s n_e)
-        let (arr2, ac2) = (get_GC y ac n_s n_e)
-        ((arr @ arr2), ac2)
+        let arr = (get_GC x acc n_s n_e)
+        let (_, last, _) = List.last arr
+        let id = 1 + get_id last
+        let arr2 = (get_GC y id n_s n_e)
+        arr @ arr2
 
 and get_b e =
     match e with
@@ -90,7 +107,7 @@ and get_a e =
     | Neg (x) -> $"-{get_a x}"
     | Exp (x, y) -> $"{get_a x}^{get_a y}"
 
-let create_program_graph ast = fst (get_C ast 1 Start End)
+let create_program_graph ast = get_C ast 1 Start End
 
 
 let write_graphviz program_graph =
@@ -107,7 +124,7 @@ let write_graphviz program_graph =
     and get_node_id node n =
         match node with
         | Start -> "\u25B7"
-        | Intermediate (n) -> string (n)
+        | Step (n) -> string (n)
         | End -> "\u25C0"
 
     let wrap_graph graph = "digraph G {\n" + graph + "}"

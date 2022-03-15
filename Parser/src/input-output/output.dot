@@ -1,6 +1,10 @@
 digraph G {
-q▷ -> q2 [label="x >= y"] 
-q2 -> q◀ [label="z:=x"] 
-q▷ -> q3 [label="y > x"] 
-q3 -> q◀ [label="z:=y"] 
+q▷ -> q1 [label="i:=1"] 
+q2 -> q3 [label="j:=i"] 
+q4 -> q3 [label="t:=A[j]"] 
+q3 -> q4 [label="j > 0 && A[j-1] > A[j]"] 
+q3 -> q4 [label="!j > 0 && A[j-1] > A[j]"] 
+q4 -> q1 [label="i:=i+1"] 
+q1 -> q2 [label="i < n"] 
+q1 -> q◀ [label="!i < n"] 
 }
