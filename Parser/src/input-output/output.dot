@@ -1,0 +1,6 @@
+digraph G {
+q▷ -> q2 [label="x >= y"] 
+q2 -> q◀ [label="z:=x"] 
+q▷ -> q3 [label="y > x"] 
+q3 -> q◀ [label="z:=y"] 
+}

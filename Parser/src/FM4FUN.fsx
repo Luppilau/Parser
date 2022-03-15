@@ -60,9 +60,7 @@ and get_GC e acc n_s n_e =
 
     | Conc (x, y) ->
         let (arr, ac) = (get_GC x acc n_s n_e)
-        printfn $"{ac}"
         let (arr2, ac2) = (get_GC y ac n_s n_e)
-        printfn $"{ac2}"
         ((arr @ arr2), ac2)
 
 and get_b e =
@@ -95,7 +93,7 @@ and get_a e =
 let create_program_graph ast = fst (get_C ast 1 Start End)
 
 
-let get_graphviz_link program_graph =
+let write_graphviz program_graph =
 
     let rec format program_graph n =
         match program_graph with
@@ -108,16 +106,13 @@ let get_graphviz_link program_graph =
 
     and get_node_id node n =
         match node with
-        | Start -> "s"
+        | Start -> "\u25B7"
         | Intermediate (n) -> string (n)
-        | End -> "e"
+        | End -> "\u25C0"
 
-    let base_url = "https://dreampuf.github.io/GraphvizOnline/#digraph%20G"
+    let wrap_graph graph = "digraph G {\n" + graph + "}"
 
-    let result = $"{base_url}%%7B%%0A{format program_graph 0}%%0A%%7D"
-    let final = result.Replace("\n", "%0A")
-
-    $"\n{final}\n"
+    System.IO.File.WriteAllText("input-output/output.dot", wrap_graph (format program_graph 0))
 
 // -------------------------------------------------------------------------------- //
 
@@ -134,20 +129,24 @@ let parse input =
 // We implement here the function that interacts with the user
 let rec compute =
     let inputPath = System.IO.Directory.GetParent(__SOURCE_DIRECTORY__)
-    let fullPath = System.IO.Path.Combine(inputPath.FullName, "src/input.txt")
+
+    let fullPath =
+        System.IO.Path.Combine(inputPath.FullName, "src/input-output/input.txt")
+
     let input = System.IO.File.ReadAllText fullPath
 
     // token_print input
-
     try
         let e = parse input
-        printfn $"Print:\n\n{pretty_print e}\n"
         let y = ast e
         let z = create_program_graph y
-        printfn $"{z}"
-        printfn $"{get_graphviz_link z}"
+        printfn $"\n{z}\n"
+        write_graphviz z
         printfn "Result: Valid GCL program"
+        printfn $"Print:\n\n{pretty_print e}\n"
     with
     | _ -> printfn "Result: Invalid GCL program \n"
+
+
 
 compute
