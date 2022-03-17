@@ -2,6 +2,7 @@ module ProgramGrapher
 
 open FM4FUNTypesAST
 
+
 type Id = Id of int
 
 type Node =
@@ -11,26 +12,24 @@ type Node =
 
 type Edge = Node * Node * string
 
-let get_id =
-    let mutable id_int = 0
+let mutable id_int = 0
 
+let get_id =
     fun () ->
         id_int <- id_int + 1
         id_int |> Id
 
-let rec get_C e id (n_s: Node) (n_e: Node) =
+let rec get_C e (n_s: Node) (n_e: Node) =
     match e with
     | Assign (x, y) -> [ Edge(n_s, n_e, $"{x}:={get_a y}") ]
     | ArrAssign (x, y, z) -> [ Edge(n_s, n_e, $"{x}[{get_a y}]:={get_a z}") ]
     | Seq (x, y) ->
-        let new_node = (Step(id ()))
+        let n_new = (Step(get_id ()))
+        (get_C x n_s n_new) @ (get_C y n_new n_e)
 
-        (get_C x id n_s new_node)
-        @ (get_C y id new_node n_e)
-
-    | If (x) -> get_GC x id n_s n_e
+    | If (x) -> get_GC x n_s n_e
     | Do (x) ->
-        get_GC x id n_s n_s
+        get_GC x n_s n_s
         @ [ Edge(n_s, n_e, $"!{get_b (get_do_b x)}") ]
     | Skip -> [ Edge(n_s, n_e, "skip") ]
 
@@ -39,15 +38,15 @@ and get_do_b x =
     | Cond (x, _) -> x
     | Conc (x, y) -> SingleAnd(get_do_b x, get_do_b y)
 
-and get_GC e id n_s n_e =
+and get_GC e n_s n_e =
     match e with
     | Cond (x, y) ->
-        let new_node = (Step(id ()))
+        let n_new = (Step(get_id ()))
 
-        (get_C y id new_node n_e)
-        @ [ Edge(n_s, new_node, $"{get_b x}") ]
+        (get_C y n_new n_e)
+        @ [ Edge(n_s, n_new, $"{get_b x}") ]
 
-    | Conc (x, y) -> (get_GC x id n_s n_e) @ (get_GC y id n_s n_e)
+    | Conc (x, y) -> (get_GC x n_s n_e) @ (get_GC y n_s n_e)
 
 and get_b e =
     match e with
@@ -80,7 +79,7 @@ and get_a e =
     | ParA (x) -> $"({get_a x})"
 
 
-let create_program_graph ast = get_C ast get_id Start End
+let create_program_graph ast = get_C ast Start End
 
 
 let write_graphviz program_graph =

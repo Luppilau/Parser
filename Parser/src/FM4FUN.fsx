@@ -22,7 +22,6 @@ open TokenPrint
 #load "ProgramGrapher.fs"
 open ProgramGrapher
 
-// -------------------------------------------------------------------------------- //
 
 // We
 let parse input =
