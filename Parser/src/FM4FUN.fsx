@@ -20,43 +20,39 @@ open PrettyPrint
 #load "TokenPrint.fsx"
 open TokenPrint
 #load "ProgramGrapher.fs"
+
 open ProgramGrapher
 
 
+type Id = Id of int
 
 type Node =
     | Start
-    | Step of int
+    | Step of Id
     | End
 
 type Edge = Node * Node * string
 
-// e:       ast
-// acc:     id of last node
-// n_s:     startnode
-// n_e:     endnode
-
 let get_id =
-    function
-    | Start -> 0
-    | Step (n) -> n
-    | End -> 2147483647
+    let mutable id_int = 0
 
-let rec get_C e acc (n_s: Node) (n_e: Node) =
-    printfn $"{acc} {e}"
+    fun () ->
+        id_int <- id_int + 1
+        id_int |> Id
 
+let rec get_C e id (n_s: Node) (n_e: Node) =
     match e with
     | Assign (x, y) -> [ Edge(n_s, n_e, $"{x}:={get_a y}") ]
     | ArrAssign (x, y, z) -> [ Edge(n_s, n_e, $"{x}[{get_a y}]:={get_a z}") ]
     | Seq (x, y) ->
-        let arr = get_C x acc n_s (Step(acc))
-        let (_, last, _) = List.last arr
-        let id = 1 + get_id last
-        let arr2 = get_C y id last n_e
-        arr @ arr2
-    | If (x) -> get_GC x acc n_s n_e
+        let new_node = (Step(id ()))
+
+        (get_C x id n_s new_node)
+        @ (get_C y id new_node n_e)
+
+    | If (x) -> get_GC x id n_s n_e
     | Do (x) ->
-        get_GC x acc n_s n_s
+        get_GC x id n_s n_s
         @ [ Edge(n_s, n_e, $"!{get_b (get_do_b x)}") ]
     | Skip -> [ Edge(n_s, n_e, "skip") ]
 
@@ -65,20 +61,15 @@ and get_do_b x =
     | Cond (x, _) -> x
     | Conc (x, y) -> SingleAnd(get_do_b x, get_do_b y)
 
-and get_GC e acc n_s n_e =
-    printfn $"{acc} {e}"
-
+and get_GC e id n_s n_e =
     match e with
     | Cond (x, y) ->
-        (get_C y (acc + 1) (Step(acc)) n_e)
-        @ [ Edge(n_s, Step(acc), $"{get_b x}") ]
+        let new_node = (Step(id ()))
 
-    | Conc (x, y) ->
-        let arr = (get_GC x acc n_s n_e)
-        let (_, last, _) = List.last arr
-        let id = 1 + get_id last
-        let arr2 = (get_GC y id n_s n_e)
-        arr @ arr2
+        (get_C y id new_node n_e)
+        @ [ Edge(n_s, new_node, $"{get_b x}") ]
+
+    | Conc (x, y) -> (get_GC x id n_s n_e) @ (get_GC y id n_s n_e)
 
 and get_b e =
     match e with
@@ -107,11 +98,10 @@ and get_a e =
     | Neg (x) -> $"-{get_a x}"
     | Exp (x, y) -> $"{get_a x}^{get_a y}"
 
-let create_program_graph ast = get_C ast 1 Start End
+let create_program_graph ast = get_C ast get_id Start End
 
 
 let write_graphviz program_graph =
-
     let rec format program_graph n =
         match program_graph with
         | x :: tail -> convert x n + format tail (n + 1)
@@ -124,10 +114,13 @@ let write_graphviz program_graph =
     and get_node_id node n =
         match node with
         | Start -> "\u25B7"
-        | Step (n) -> string (n)
+        | Step (Id (n)) -> string (n)
         | End -> "\u25C0"
 
-    let wrap_graph graph = "digraph G {\n" + graph + "}"
+    let wrap_graph graph =
+        "digraph G {\nrankdir=LR;\nnode [shape = circle]\n"
+        + graph
+        + "}"
 
     System.IO.File.WriteAllText("input-output/output.dot", wrap_graph (format program_graph 0))
 
