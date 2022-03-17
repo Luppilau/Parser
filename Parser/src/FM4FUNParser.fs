@@ -504,7 +504,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 79 "Parser/src/FM4FUNParser.fsp"
-                                                             _2 
+                                                             ParA(_2) 
                    )
 # 79 "Parser/src/FM4FUNParser.fsp"
                  : 'arithmetic));
@@ -657,7 +657,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 94 "Parser/src/FM4FUNParser.fsp"
-                                                             _2 
+                                                             ParB(_2) 
                    )
 # 94 "Parser/src/FM4FUNParser.fsp"
                  : 'boolean));

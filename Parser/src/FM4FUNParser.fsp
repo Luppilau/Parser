@@ -76,7 +76,7 @@ arithmetic:
   | arithmetic DIV arithmetic         { Div($1,$3) }
   | MINUS arithmetic                  { Neg($2) }
   | arithmetic POW arithmetic         { Exp($1,$3) }
-  | LPAR arithmetic RPAR              { $2 }
+  | LPAR arithmetic RPAR              { ParA($2) }
 
 boolean: 
   | BOOL                              { Bool($1) }
@@ -91,7 +91,7 @@ boolean:
   | arithmetic GT EQUAL arithmetic    { Geq($1, $4) }
   | arithmetic LT arithmetic          { Lt($1, $3) }
   | arithmetic LT EQUAL arithmetic    { Leq($1, $4) }
-  | LPAR boolean RPAR                 { $2 }
+  | LPAR boolean RPAR                 { ParB($2) }
 
 
 // Again, the code annotation specifies the result of parsing

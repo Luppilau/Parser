@@ -23,6 +23,7 @@ and a =
     | Div of (a * a)
     | Neg of a
     | Exp of (a * a)
+    | ParA of a
 
 and b =
     | Bool of bool
@@ -37,3 +38,4 @@ and b =
     | Geq of (a * a)
     | Lt of (a * a)
     | Leq of (a * a)
+    | ParB of b

@@ -30,6 +30,7 @@ and eval_b e =
     | Geq (x, y) -> Geq(eval_a x, eval_a y)
     | Lt (x, y) -> Lt(eval_a x, eval_a y)
     | Leq (x, y) -> Leq(eval_a x, eval_a y)
+    | ParB (x) -> ParB(eval_b x)
 
 and eval_a e =
     match e with
@@ -42,3 +43,4 @@ and eval_a e =
     | Div (x, y) -> Div(eval_a x, eval_a y)
     | Neg (x) -> Neg(eval_a x)
     | Exp (x, y) -> Exp(eval_a x, eval_a y)
+    | ParA (x) -> ParA(eval_a x)
