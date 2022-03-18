@@ -33,18 +33,16 @@ let rec get_do_b x =
     | Conc (x, y) -> SingleAnd(get_do_b x, get_do_b y)
 
 let edge_label_conc exp x =
-    if is_deterministic then
-        (SingleAnd(get_det x, ParB(NegB(exp))))
-    else
-        exp
+    match is_deterministic with
+    | true -> (SingleAnd(get_det x, ParB(NegB(exp))))
+    | _ -> (exp)
 
 let edge_label_cond exp x =
-    if is_deterministic then
-        (SingleAnd(x, ParB(NegB(exp))))
-    else
-        x
+    match is_deterministic with
+    | true -> (SingleAnd(x, ParB(NegB(exp))))
+    | _ -> x
 
-// ---------------- HELPERS ---------------------
+// ---------------- !HELPERS ---------------------
 
 let rec get_C e (n_s: Node) (n_e: Node) =
     match e with

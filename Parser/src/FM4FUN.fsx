@@ -13,8 +13,6 @@ open FM4FUNParser
 #load "FM4FUNLexer.fs"
 open FM4FUNLexer
 
-#load "SyntaxTree.fs"
-open SyntaxTree
 #load "PrettyPrint.fs"
 open PrettyPrint
 #load "TokenPrint.fsx"
@@ -44,12 +42,19 @@ let rec compute =
     // token_print input
     try
         let e = parse input
-        let y = ast e
-        let z = create_program_graph y false
-        printfn $"\n{z}\n"
-        write_graphviz z
         printfn "Result: Valid GCL program"
-        printfn $"Print:\n\n{pretty_print e}\n"
+
+        // Pretty print ast
+        printfn $"\nAST:\n{pretty_print e}\n"
+
+        // Create program graph
+        // Pass 'true' for deterministic program graph
+        let z = create_program_graph e false
+
+        // Save program graph to file
+        write_graphviz z
+
+    //
     with
     | _ -> printfn "Result: Invalid GCL program \n"
 
