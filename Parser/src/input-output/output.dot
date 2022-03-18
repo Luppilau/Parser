@@ -2,11 +2,11 @@ digraph G {
 rankdir=LR;
 node [shape = circle]
 q1 -> q◀ [label="z:=x"] 
-q▷ -> q1 [label="x >= y & (!False)"] 
+q▷ -> q1 [label="x >= y"] 
 q2 -> q◀ [label="z:=y"] 
-q▷ -> q2 [label="y > x & (!x >= y & (!False))"] 
+q▷ -> q2 [label="y > x"] 
 q3 -> q◀ [label="z:=y"] 
-q▷ -> q3 [label="y > z & (!y > x & (!x >= y & (!False)))"] 
+q▷ -> q3 [label="y > z"] 
 q4 -> q◀ [label="z:=y"] 
-q▷ -> q4 [label="x > y & (!y > z & (!y > x & (!x >= y & (!False))))"] 
+q▷ -> q4 [label="x > y"] 
 }
