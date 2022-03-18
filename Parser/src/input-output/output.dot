@@ -1,12 +1,13 @@
 digraph G {
 rankdir=LR;
 node [shape = circle]
-q1 -> q◀ [label="z:=x"] 
-q▷ -> q1 [label="x >= y"] 
-q2 -> q◀ [label="z:=y"] 
-q▷ -> q2 [label="y > x"] 
-q3 -> q◀ [label="z:=y"] 
-q▷ -> q3 [label="y > z"] 
-q4 -> q◀ [label="z:=y"] 
-q▷ -> q4 [label="x > y"] 
+q▷ -> q◀ [label="!((x > 0) | ((x > 2) | ((x > 2) | (x > 2))))"] 
+q▷ -> q1 [label="(x > 0) & (!False)"] 
+q1 -> q▷ [label="y:=x"] 
+q▷ -> q2 [label="(x > 2) & (!((x > 0) | False))"] 
+q2 -> q▷ [label="y:=x"] 
+q▷ -> q3 [label="(x > 2) & (!((x > 2) | ((x > 0) | False)))"] 
+q3 -> q▷ [label="y:=x"] 
+q▷ -> q4 [label="(x > 2) & (!((x > 2) | ((x > 2) | ((x > 0) | False))))"] 
+q4 -> q▷ [label="y:=x"] 
 }

@@ -1,5 +1,5 @@
-if x>=y -> z:=x
-[] y>x -> z:=y
-[] y>z -> z:=y
-[] x>y -> z:=y
-fi
+do x>0 -> y:=x
+[] x>2 -> y:=x
+[] x>2 -> y:=x
+[] x>2 -> y:=x
+od
