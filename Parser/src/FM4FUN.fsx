@@ -23,30 +23,6 @@ open TokenPrint
 open ProgramGrapher
 
 
-let write_graphviz program_graph =
-    let rec format program_graph n =
-        match program_graph with
-        | x :: tail -> convert x n + format tail (n + 1)
-        | _ -> ""
-
-    and convert edge n =
-        match edge with
-        | (n_1, n_2, expr) -> $"q{get_node_id n_1 n} -> q{get_node_id n_2 (n + 1)} [label=\"{expr}\"] \n"
-
-    and get_node_id node n =
-        match node with
-        | Start -> "\u25B7"
-        | Step (Id (n)) -> string (n)
-        | End -> "\u25C0"
-
-    let wrap_graph graph =
-        "digraph G {\nrankdir=LR;\nnode [shape = circle]\n"
-        + graph
-        + "}"
-
-    System.IO.File.WriteAllText("input-output/output.dot", wrap_graph (format program_graph 0))
-
-// We
 let parse input =
     // translate string into a buffer of characters
     let lexbuf = LexBuffer<char>.FromString input
