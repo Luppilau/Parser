@@ -44,13 +44,12 @@ let rec get_do_b x exp =
         | Cond (x, _) -> ParB(NegB(ParB(x)))
         | Conc (x, y) -> SingleAnd(get_do_b x exp, get_do_b y exp)
 
-
 // ---------------- !HELPERS ---------------------
 
 let rec get_C e (n_s: Node) (n_e: Node) =
     match e with
-    | Assign x -> [ Edge(n_s, n_e, (Cexp(e))) ]
-    | ArrAssign (x, y, z) -> [ Edge(n_s, n_e, Cexp(e)) ]
+    | Assign (_, _) -> [ Edge(n_s, n_e, (Cexp(e))) ]
+    | ArrAssign (_, _, _) -> [ Edge(n_s, n_e, Cexp(e)) ]
     | Seq (x, y) ->
         let n_new = (Step(get_id ()))
         (get_C x n_s n_new) @ (get_C y n_new n_e)

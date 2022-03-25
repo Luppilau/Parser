@@ -22,6 +22,7 @@ open ProgramGrapher
 
 
 
+
 let parse input =
     // translate string into a buffer of characters
     let lexbuf = LexBuffer<char>.FromString input
@@ -35,10 +36,17 @@ let parse input =
 let rec compute =
     let inputPath = System.IO.Directory.GetParent(__SOURCE_DIRECTORY__)
 
-    let fullPath =
+    let programPath =
         System.IO.Path.Combine(inputPath.FullName, "src/input-output/input.txt")
 
-    let input = System.IO.File.ReadAllText fullPath
+    let configInputPath =
+        System.IO.Path.Combine(inputPath.FullName, "src/input-output/input.txt")
+
+    let input = System.IO.File.ReadAllText programPath
+
+    let configInput = System.IO.File.ReadAllText configInputPath
+
+    //TODO extract configurations and save in memory map somehow
 
     // token_print input
     try
@@ -51,6 +59,7 @@ let rec compute =
         // Create program graph
         // Pass 'true' for deterministic program graph
         let z = create_program_graph e true
+
 
         // Save program graph to file
         write_graphviz z
